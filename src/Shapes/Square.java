@@ -6,7 +6,7 @@ import java.awt.Graphics;
 
 public class Square {
 
-	private final int TILE_SIZE = 20;
+	public static final int TILE_SIZE = 20;
 	private int width, height;
 	private int x, y;
 	
@@ -15,7 +15,6 @@ public class Square {
 		this.y = y;
 		this.width = TILE_SIZE; 
 		this.height = TILE_SIZE;
-		
 	}
 	
 	public int getWidth() {
@@ -48,6 +47,18 @@ public class Square {
 
 	public void setY(int y) {
 		this.y = y;
+	}
+	
+	public void moveRight() {
+		this.x += width;
+	}
+	
+	public void moveLeft() {
+		this.x -= width;
+	}
+	
+	public void moveDown() {
+		this.y += 20;
 	}
 
 

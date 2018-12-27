@@ -11,8 +11,8 @@ public class Window extends JFrame{
 		setTitle("Dead Man's Tetris");
 		pack();
 		setLocationRelativeTo(null);
-		setSize(1280, 720);
-		setContentPane(new GamePanel(1280, 720));
+		setSize(200, 1000);
+		setContentPane(new GamePanel(200, 1000));
 		setVisible(true);
 	}
 
