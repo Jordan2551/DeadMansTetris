@@ -50,7 +50,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 		running = true;
 		gameThread = new Thread(this);
 		gameThread.start();
-
 	}
 
 	public void stop() {
@@ -66,7 +65,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 	public void run() {
 		long before = System.nanoTime();
 		long now;
-		final double nOT = 60D;
+		final double nOT = 20D;
 		final double fps = 1000000000 / nOT;
 		double delta = 0;
 
@@ -95,13 +94,36 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 		// Repaint the entire canvas
 		super.paint(g);
 		setBackground(Color.black);
-		List<Block> allBlocks = logic.getAllBlocks();
-		for (int i = 0; i < allBlocks.size(); i++) {
-			for (Square square : allBlocks.get(i).getSquares()) {
-				g.setColor(Color.red);
-				g.fillRect(square.getX(), square.getY(), square.getWidth(), square.getHeight());
+		boolean[][] grid = logic.getGrid();
+
+		//Draw the grid with the existing static blocks
+		for(int row = 0; row < grid.length; row++) {
+			//Loop through every column of its squares array
+			for(int col = 0; col < grid[row].length; col++) {
+				//Only draw the squares which are supposed to occupy the shape!
+				if(grid[row][col]) {
+					g.setColor(Color.red);
+					g.fillRect(col * Square.TILE_SIZE, row * Square.TILE_SIZE, Square.TILE_SIZE, Square.TILE_SIZE);
+				}
 			}
 		}
+		
+		
+		Block movingBlock = logic.getMovingBlock();
+		TopLeft topLeft = movingBlock.getTopLeft();
+		
+		//Draw the moving block
+		for(int row = 0; row < movingBlock.getSquares().length; row++) {
+			//Loop through every column of its squares array
+			for(int col = 0; col < movingBlock.getSquares()[row].length; col++) {
+				//Only draw the squares which are supposed to occupy the shape!
+				if(movingBlock.getSquares()[row][col]) {
+					g.setColor(Color.red);
+					g.fillRect((movingBlock.getTopLeft().getCol() + col) * Square.TILE_SIZE, (movingBlock.getTopLeft().getRow() + row) * Square.TILE_SIZE, Square.TILE_SIZE, Square.TILE_SIZE);
+				}
+			}
+		}
+		
 
 	}
 
