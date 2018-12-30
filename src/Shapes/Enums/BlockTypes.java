@@ -1,7 +1,7 @@
 package Shapes.Enums;
 
 public enum BlockTypes {
-	IBLOCK(0), OBLOCK(1), JBLOCK(2), LBLOCK(3), SBLOCK(4), TBLOCK(5), ZBLOCK(6);
+	IBLOCK(1), OBLOCK(0), JBLOCK(2), LBLOCK(3), SBLOCK(4), TBLOCK(5), ZBLOCK(6);
 
 	private int value;
 

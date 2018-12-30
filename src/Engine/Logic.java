@@ -26,15 +26,23 @@ import Shapes.Enums.BlockTypes;
 //FOR EXAMPLE, AN I BLOCK SHOULD TAKE UP 4 SLOTS OF THE SAME ROW INDEX, IT WOULD SET THOSE VALUES TO TRUE
 public class Logic {
 
+	//Grid row and column count
+	private boolean[][] grid;
+	private final int GRID_RC;
+	private final int GRID_CC;
+	
 	private Block movingBlock;
 	private Block secondaryBlock;
 	private List<Block> staticBlocks;
-	private boolean[][] grid;
+	private boolean gameOver;
 	private int score;
+	
 
 	public Logic() {
+		GRID_RC = (GamePanel.height / Square.TILE_SIZE); 
+		GRID_CC = (GamePanel.width / Square.TILE_SIZE);
+		grid = new boolean[GRID_RC][GRID_CC];
 		staticBlocks = new ArrayList<Block>();
-		grid = new boolean[GamePanel.height / (Square.TILE_SIZE)][(GamePanel.width / Square.TILE_SIZE)];
 	}
 
 	public void addStaticBlock(Block block) {
@@ -59,6 +67,31 @@ public class Logic {
 		allBlocks.add(movingBlock);
 		return allBlocks;
 	}
+	
+	public boolean getGameOver() {
+		return gameOver;
+	}
+	
+	//Gets the column number for the specified square
+	private int getGridColumn(Square square) {
+		int column = square.getX() / Square.TILE_SIZE;
+		return column == 0 ? column : column - 1;
+	}
+	
+	//Gets the row number for the specified square
+	private int getGridRow(Square square) {
+		int row = square.getY() / Square.TILE_SIZE;
+		return row == 0 ? row : row - 1;
+	}
+	
+	//Gets the last available row number on the grid for the specified column
+	private int getAvailableRow(int column){
+		for (int i = 0; i < grid.length; i++) {
+			if(grid[i][column])
+				return i - 1;	//Last empty row is the first occupied row - 1
+		}
+		return grid.length - 1; //Bottom of column is the bottom of the grid
+	}
 
 	public void performTick() {
 		moveDown();
@@ -81,9 +114,9 @@ public class Logic {
 			//TODO:: find if any of the squares hit the 'bottom' of the row for them	
 			// Make a method call squareCollided? Which checks if the square is -20 from another square on the panel
 			// If it is, then we have a collision
-			if (square.getY() == GamePanel.height - 20) {
+			if (squareCollides(square)) {
 				collided = true;
-				collidedBlocks();
+				collideBlocks();
 			}
 		}
 		if (!collided) {
@@ -93,10 +126,21 @@ public class Logic {
 		}
 	}
 
+	private boolean squareCollides(Square square) {
+		//Get the grid coordinates of this square
+		int gridC = getGridColumn(square);
+		int gridR = getGridRow(square);
+		//If that spot on the grid is not free, there is collision, or, we are at the bottom of the grid and the spot is free, which means collision with bottom
+		if(grid[gridR][gridC] || (gridR == GRID_RC - 1 && grid[GRID_RC - 1][gridC] == false))
+			return true;
+
+		return false;
+	}
+	
 	//Executes the necessary logic and checks for when two blocks collide
-	private void collidedBlocks() {
+	private void collideBlocks() {
 		staticBlocks.add(movingBlock);
-		addToGrid();
+		addBlockToGrid();
 		checkForScore();
 		movingBlock = generateBlock();
 		System.out.println(printBoard());
@@ -134,7 +178,7 @@ public class Logic {
 	}
 	
 	public Block generateBlock() {
-		int randomBlock = ThreadLocalRandom.current().nextInt(0, 2);
+		int randomBlock = ThreadLocalRandom.current().nextInt(0, 1);
 		if(randomBlock == BlockTypes.IBLOCK.getValue())
 			return new IBlock();
 		else if(randomBlock == BlockTypes.OBLOCK.getValue())
@@ -144,11 +188,15 @@ public class Logic {
 	}
 	
 	//Adds the moving block which has just landed to the grid 
-	private void addToGrid() {
+	private void addBlockToGrid() {
 		for (Square square : movingBlock.getSquares()) {
 			int gridC = getGridColumn(square);
-			int gridR = getGridRow(gridC);
-			grid[gridR][gridC] = true;
+			int gridR = getAvailableRow(gridC);
+			//When the available row to add a square is at index -1 the game is over!
+			if(gridR == -1)
+				gameOver = true;
+			else
+				grid[gridR][gridC] = true;
 		}
 		printBoard();
 	}
@@ -171,19 +219,6 @@ public class Logic {
 		}
 	}
 	
-	//Gets the column that I want to fill with a block
-	private int getGridColumn(Square square) {
-		return square.getX() / Square.TILE_SIZE;
-	}
-	
-	//Gets the row that we want to fill with a block
-	private int getGridRow(int column) {
-		for (int i = 0; i < grid.length; i++) {
-			if(grid[i][column])
-				return i - 1;	//Indicate that the next row to fill is just above this one
-		}
-		return grid.length - 1; //Bottom of column is the bottom of the grid
-	}
 	
 	private String printBoard() {
 		String b = "";

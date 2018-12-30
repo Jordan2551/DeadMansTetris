@@ -4,9 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.TrayIcon.MessageType;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import Shapes.Enums.BlockTypes;
@@ -64,7 +66,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 	public void run() {
 		long before = System.nanoTime();
 		long now;
-		final double nOT = 15D;
+		final double nOT = 60D;
 		final double fps = 1000000000 / nOT;
 		double delta = 0;
 
@@ -81,7 +83,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 	}
 
 	public void tick() {
-		logic.performTick();
+		if(!logic.getGameOver())
+			logic.performTick();
+		else {
+			running = false;	
+			JOptionPane.showMessageDialog(this, "You got this bullet in your head!");
+		}
 	}
 
 	public void paint(Graphics g) {
@@ -112,7 +119,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 			break;
 		//TODO: ROTATIONS
 		case KeyEvent.VK_SPACE:
-			logic.rotate();
+			running = !running;
 			break;
 		}
 
