@@ -39,7 +39,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 		logic = new Logic();
 		setPreferredSize(new Dimension(width, height));
 		addKeyListener(this);
-		logic.setMovingBlock(logic.generateBlock());
+		logic.setMovingBlock(BlockHelper.generateBlock());
 		// Focus on the panel as soon as its created
 		setFocusable(true);
 		requestFocus();
@@ -108,10 +108,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 			}
 		}
 		
-		
-		Block movingBlock = logic.getMovingBlock();
-		TopLeft topLeft = movingBlock.getTopLeft();
-		
+		Block movingBlock = logic.getMovingBlock();		
 		//Draw the moving block
 		for(int row = 0; row < movingBlock.getSquares().length; row++) {
 			//Loop through every column of its squares array
@@ -138,6 +135,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 			break;
 		case KeyEvent.VK_LEFT:
 			logic.moveLeft();
+			break;
+		case KeyEvent.VK_Z:
+			logic.rotate();
 			break;
 		//TODO: ROTATIONS
 		case KeyEvent.VK_SPACE:

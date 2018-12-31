@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import Shapes.Block;
-import Shapes.IBlock;
-import Shapes.LBlock;
-import Shapes.OBlock;
+import Shapes.BlockHelper;
 import Shapes.Square;
 import Shapes.TopLeft;
 import Shapes.Enums.BlockTypes;
@@ -62,6 +60,10 @@ public class Logic {
 	public void performTick() {
 		moveDown();
 	}
+	
+	public void rotate() {
+		BlockHelper.rotate(movingBlock);
+	}
 
 	public void moveDown() {
 		// Move blocks top left 1 row down
@@ -84,8 +86,7 @@ public class Logic {
 		if (collided) {
 			collideBlocks();
 			checkForScore();
-		}
-		else
+		} else
 			movingBlock.setTopLeft(potentialTopLeft);
 	}
 
@@ -100,8 +101,7 @@ public class Logic {
 				}
 			}
 		}
-//		checkForScore();
-		movingBlock = generateBlock();
+		movingBlock = BlockHelper.generateBlock();
 		System.out.println(printBoard());
 	}
 
@@ -109,7 +109,8 @@ public class Logic {
 		// Our desired new topLeft is one shifted by a column to the right
 		TopLeft desiredTopLeft = movingBlock.getTopLeft();
 		desiredTopLeft.setCol(desiredTopLeft.getCol() + 1);
-		if (desiredTopLeft.getCol() < GRID_CC) {
+		// Make sure the edge of the block can only touch the right wall
+		if (movingBlock.getSquares()[0].length + desiredTopLeft.getCol() <= GRID_CC) {
 			movingBlock.setTopLeft(desiredTopLeft);
 		}
 	}
@@ -121,20 +122,6 @@ public class Logic {
 		if (desiredTopLeft.getCol() >= 0) {
 			movingBlock.setTopLeft(desiredTopLeft);
 		}
-	}
-
-	public Block generateBlock() {
-		int randomBlock = ThreadLocalRandom.current().nextInt(0, 2);
-		boolean[][] squares;
-		if(randomBlock == 0) {
-			squares = new boolean[][] { { true, true }, { true, true } };
-		}else {
-			squares = new boolean[][] { { true }, {true }, {true }, {true } };
-		}
-
-
-		Block block = new Block(squares);
-		return block;
 	}
 
 	// Scans the grid for full rows, adds to score and resets that part of the grid
