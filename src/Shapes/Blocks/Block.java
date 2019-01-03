@@ -1,4 +1,4 @@
-package Shapes;
+package Shapes.Blocks;
 
 import java.awt.Color;
 import java.util.concurrent.ThreadLocalRandom;
@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import Engine.GamePanel;
 import Shapes.Enums.BlockTypes;
 
-public class Block {
+public abstract class Block {
 
 	/*
 	 * The squares array is the layout of a Tetris block on a grid. For example: an
@@ -16,10 +16,11 @@ public class Block {
 	 * 
 	 */
 	private boolean[][] squares;
+	private boolean[][][] rotations;
 	private TopLeft topLeft;
+	private int selectedRotation;
 
-	public Block(boolean[][] squares) {
-		this.squares = squares;
+	public Block() {
 		this.topLeft = new TopLeft(0, ((GamePanel.width / 2) / 20) - 1);
 	}
 
@@ -27,8 +28,12 @@ public class Block {
 		return squares;
 	}
 
-	public void setSquares(boolean[][] squares) {
+	protected void setSquares(boolean[][] squares) {
 		this.squares = squares;
+	}
+	
+	protected void setRotations(boolean[][][] rotations) {
+		this.rotations = rotations;
 	}
 
 	// A deep copy of blocks
@@ -44,5 +49,18 @@ public class Block {
 	public void setTopLeft(TopLeft topLeft) {
 		this.topLeft = topLeft;
 	}
-
+	
+	public void rotate() {
+		if(selectedRotation == rotations.length - 1) {
+			selectedRotation = 0;
+			squares = rotations[0];
+		}
+		else {
+			selectedRotation++;
+			squares = rotations[selectedRotation];
+		}
+	}
+	
+	public abstract boolean[][][] getRotations();
+	
 }

@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import Shapes.Block;
-import Shapes.BlockHelper;
 import Shapes.Square;
-import Shapes.TopLeft;
+import Shapes.Blocks.Block;
+import Shapes.Blocks.BlockHelper;
+import Shapes.Blocks.TopLeft;
 import Shapes.Enums.BlockTypes;
 
 /*	In this class I use a boolean grid for the game, it is specified as follows:
@@ -60,9 +60,9 @@ public class Logic {
 	public void performTick() {
 		moveDown();
 	}
-	
+
 	public void rotate() {
-		BlockHelper.rotate(movingBlock);
+		movingBlock.rotate();
 	}
 
 	public void moveDown() {

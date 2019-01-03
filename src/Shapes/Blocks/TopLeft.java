@@ -1,4 +1,4 @@
-package Shapes;
+package Shapes.Blocks;
 
 public class TopLeft {
 	private int row;

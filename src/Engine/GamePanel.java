@@ -17,7 +17,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import Shapes.*;;
+import Shapes.*;
+import Shapes.Blocks.Block;
+import Shapes.Blocks.BlockHelper;;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener {
 
@@ -65,7 +67,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 	public void run() {
 		long before = System.nanoTime();
 		long now;
-		final double nOT = 20D;
+		final double nOT = 30D;
 		final double fps = 1000000000 / nOT;
 		double delta = 0;
 
@@ -75,9 +77,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 			before = now;
 			if (delta >= 1) {
 				tick();
-				repaint();
 				delta--;
 			}
+			repaint();
+
 		}
 	}
 
